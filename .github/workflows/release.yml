@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            script: electron/scripts/build-backend.bat
+          - os: macos-latest
+            script: electron/scripts/build-backend.sh
+          - os: ubuntu-latest
+            script: electron/scripts/build-backend.sh
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r backend/requirements.txt pyinstaller
+
+      - name: Build backend binary
+        shell: bash
+        run: bash ${{ matrix.script }}
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Copy frontend dist to Electron resources
+        shell: bash
+        run: |
+          mkdir -p electron/resources/static
+          cp -r frontend/dist/. electron/resources/static/
+
+      - name: Install Electron dependencies
+        working-directory: electron
+        run: npm ci
+
+      - name: Build and publish Electron app
+        working-directory: electron
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx electron-builder --publish always

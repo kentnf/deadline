@@ -1,0 +1,46 @@
+appId: com.deadline.app
+productName: Deadline
+copyright: Copyright © 2026 kentnf
+
+directories:
+  output: dist
+  buildResources: build-assets
+
+files:
+  - main.js
+  - preload.js
+  - splash.html
+  - resources/**
+
+publish:
+  provider: github
+  releaseType: prerelease
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: Deadline-Setup-${version}.exe
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  artifactName: Deadline-${version}-${arch}.dmg
+  category: public.app-category.productivity
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  artifactName: Deadline-${version}.AppImage
+  category: Office
