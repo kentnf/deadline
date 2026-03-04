@@ -8,7 +8,7 @@ from app.api import templates, projects, llm, export, chat, papers, profile, tag
 from app.db.session import engine
 from app.models import base as models_base
 
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.1.1"
 
 app = FastAPI(title="Deadline API", version=APP_VERSION)
 
