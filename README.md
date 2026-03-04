@@ -32,7 +32,9 @@
 | macOS (Apple Silicon) | `Deadline-x.y.z-arm64.dmg` |
 | Linux | `Deadline-x.y.z.AppImage` |
 
-> **macOS 用户**：首次打开时如果提示"无法打开"，请右键点击 → 打开，或在系统设置 → 隐私与安全性中点击"仍要打开"。
+> **macOS 用户**：本应用未经 Apple 公证，首次打开会被 Gatekeeper 拦截。
+> - 提示"来自身份不明的开发者" → 在**系统设置 → 隐私与安全性**中点击"仍要打开"
+> - 提示"已损坏，无法打开" → 打开终端执行：`xattr -cr /Applications/Deadline.app`
 >
 > **Windows 用户**：Windows Defender SmartScreen 可能弹出警告，点击"更多信息" → "仍要运行"即可。
 

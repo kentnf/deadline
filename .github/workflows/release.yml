@@ -11,11 +11,21 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            script: electron/scripts/build-backend.bat
+            build_cmd: call electron/scripts/build-backend.bat
+            shell: cmd
+            electron_args: ''
+          - os: macos-13
+            build_cmd: bash electron/scripts/build-backend.sh
+            shell: bash
+            electron_args: '--arch x64'
           - os: macos-latest
-            script: electron/scripts/build-backend.sh
+            build_cmd: bash electron/scripts/build-backend.sh
+            shell: bash
+            electron_args: '--arch arm64'
           - os: ubuntu-latest
-            script: electron/scripts/build-backend.sh
+            build_cmd: bash electron/scripts/build-backend.sh
+            shell: bash
+            electron_args: ''
 
     runs-on: ${{ matrix.os }}
 
@@ -35,8 +45,8 @@ jobs:
         run: pip install -r backend/requirements.txt pyinstaller
 
       - name: Build backend binary
-        shell: bash
-        run: bash ${{ matrix.script }}
+        shell: ${{ matrix.shell }}
+        run: ${{ matrix.build_cmd }}
 
       - name: Set up Node 20
         uses: actions/setup-node@v4
@@ -63,4 +73,4 @@ jobs:
         working-directory: electron
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx electron-builder --publish always
+        run: npx electron-builder --publish always ${{ matrix.electron_args }}
